@@ -223,7 +223,7 @@ class AttentionControl(abc.ABC):
                 attn = self.forward(attn, is_cross, place_in_unet)
             else:
                 h = attn.shape[0]
-                attn[h // 2:] = self.forward(attn[h // 2:], is_cross, place_in_unet)
+                attn[h // 3:] = self.forward(attn[h // 3:], is_cross, place_in_unet)
         self.cur_att_layer += 1
         if self.cur_att_layer == self.num_att_layers + self.num_uncond_att_layers:
             self.cur_att_layer = 0
