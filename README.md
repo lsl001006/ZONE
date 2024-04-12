@@ -18,7 +18,7 @@ Recent advances in vision-language models like Stable Diffusion have shown remar
 
 
 ## Dataset
-We provide the test set used in our paper. We randomly select and annotate 100 samples for evaluation, including 60 real images from the Internet and 40 synthetic images. To ensure the representativeness of the evaluation, we consider the diversity of scenes and objects in the sample selection. In particular, we divide the test set into three categories: 32 images for ``add", 54 for ``change", and 14 for ``remove" actions. All these 100 images are listed in the supplementary material. The test set can be downloaded from [Google Drive](https://drive.google.com/file/d/1lAwpENoDcO1QyFuwz3iKJJ7DmDTFMvIU/view?usp=sharing)
+We provide the test set used in our paper. We randomly select and annotate 100 samples for evaluation, including 60 real images from the Internet and 40 synthetic images. To ensure the representativeness of the evaluation, we consider the diversity of scenes and objects in the sample selection. In particular, we divide the test set into three categories: 32 images for `add`, 54 for `change`, and 14 for `remove` actions. All these 100 images are listed in the supplementary material. The test set can be downloaded from [Google Drive](https://drive.google.com/file/d/1lAwpENoDcO1QyFuwz3iKJJ7DmDTFMvIU/view?usp=sharing)
 
 ## Installation
 
