@@ -14,7 +14,7 @@ Recent advances in vision-language models like Stable Diffusion have shown remar
 
 ## TODO
 - [x] 2024.04.12 release inference code and test set
-- [ ] 2024.04.15-17 update arxiv with camera-ready version
+- [x] 2024.04.15 update arxiv paper with camera-ready version
 
 
 ## Dataset
