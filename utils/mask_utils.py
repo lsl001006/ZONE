@@ -279,7 +279,13 @@ def subtract_fft_images(fg_dilated_mask, bg_dilated_mask, threshold=35, high_fre
 
     kernel = np.ones((21,21),np.uint8)
     img = cv2.morphologyEx(img, cv2.MORPH_CLOSE, kernel)
-    contours, _ = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    # contours, _ = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    cv_version = cv2.__version__.split('.')[0] # check cv2 version, to avoid unpack error
+
+    if int(cv_version) >= 4:
+        contours, _ = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    else:
+        _, contours, _ = cv2.findContours(img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     
     img1 = np.zeros_like(img).astype(np.uint8)
     img1 = np.expand_dims(img1, axis=-1)  
