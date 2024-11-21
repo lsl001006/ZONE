@@ -47,7 +47,7 @@ def check_image_size(pil_image, side_multiple=32, max_size=512):
             nh = max_size
             nw = int(w * max_size / h)
 
-        pil_image = pil_image.resize((nw, nh), Image.ANTIALIAS)
+        pil_image = pil_image.resize((nw, nh))
         w, h = pil_image.size  # Update size after resizing
     
     # Calculate target dimensions ensuring they are multiples of side_multiple
