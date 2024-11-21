@@ -1,4 +1,5 @@
 from msk_from_attn import *
+from ptp_utils import check_image_size
 from diffusers import DDIMScheduler,StableDiffusionInstructPix2PixPipeline,DPMSolverMultistepScheduler
 from null_text_w_ptp import text2image_instructpix2pix_blend
 import argparse
@@ -45,6 +46,8 @@ def fused_ip2p(args):
     prompts = [args.instruction]
     image_name = os.path.basename(args.image_path).split('.')[0]
     gt_image_pil = Image.open(args.image_path)
+    # update: check image size && resize to avoid OOM
+    gt_image_pil = check_image_size(gt_image_pil)
     w, h = gt_image_pil.size
     mode = action_classify(pipe, args.instruction)
     tokenizer = pipe.tokenizer

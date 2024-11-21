@@ -14,10 +14,41 @@
 
 import numpy as np
 import torch
-from PIL import Image
+from PIL import Image, ImageOps
 import cv2
 from typing import Optional, Union, Tuple, List, Dict
 from tqdm import tqdm
+
+
+def check_image_size(pil_image, short_side_multiple=32):
+    w, h = pil_image.size
+    max_size = 512
+    if w > max_size or h > max_size:
+        print(f'[W] Image size is too large ({pil_image.size}), to avoid OOM, automatically resizing longest side to max_size: {max_size}')
+        
+        if w > h:
+            nw = max_size
+            nh = int(h * max_size / w)
+        else:
+            nh = max_size
+            nw = int(w * max_size / h)
+        
+        pil_image = pil_image.resize((nw, nh))
+        
+        # make sure the short side is multiple of 32, 
+        # which is required by attention control functions in msk_from_attn.py (aggregate_attention, show_all_cross_attention, show_diff_cross_attention)
+        # Adding padding to keep image ratio
+        if nw < nh:
+            target_width = (nw // short_side_multiple+1) * short_side_multiple
+            padding = (target_width - nw) // 2
+            pil_image = ImageOps.expand(pil_image, (padding, 0), fill='black')
+        else:
+            target_height = (nh // short_side_multiple+1) * short_side_multiple
+            padding = (target_height - nh) // 2
+            pil_image = ImageOps.expand(pil_image, (0, padding), fill='black')
+
+    print('Input image size:', pil_image.size)
+    return pil_image
 
 
 def text_under_image(image: np.ndarray, text: str, text_color: Tuple[int, int, int] = (0, 0, 0)):
