@@ -18,36 +18,57 @@ from PIL import Image, ImageOps
 import cv2
 from typing import Optional, Union, Tuple, List, Dict
 from tqdm import tqdm
+import math
 
 
-def check_image_size(pil_image, short_side_multiple=32):
+def check_image_size(pil_image, side_multiple=32, max_size=512):
+    """
+    Adjusts the image size to ensure its longest side does not exceed max_size,
+    and that both image dimensions are multiples of a specified number.
+
+    Args:
+        pil_image (PIL.Image.Image): The input image in PIL format.
+        side_multiple (int, optional): Ensures both sides are multiples of this value. Default is 32.
+        max_size (int, optional): Maximum allowable size for the longest side of the image. Default is 512.
+
+    Returns:
+        PIL.Image.Image: The adjusted image.
+    """
     w, h = pil_image.size
-    max_size = 512
+    
+    # Resize to ensure longest side does not exceed max_size
     if w > max_size or h > max_size:
-        print(f'[W] Image size is too large ({pil_image.size}), to avoid OOM, automatically resizing longest side to max_size: {max_size}')
-        
+        print(f'[W] Image size is too large ({w}x{h}), resizing longest side to {max_size}.')
+
         if w > h:
             nw = max_size
             nh = int(h * max_size / w)
         else:
             nh = max_size
             nw = int(w * max_size / h)
-        
-        pil_image = pil_image.resize((nw, nh))
-        
-        # make sure the short side is multiple of 32, 
-        # which is required by attention control functions in msk_from_attn.py (aggregate_attention, show_all_cross_attention, show_diff_cross_attention)
-        # Adding padding to keep image ratio
-        if nw < nh:
-            target_width = (nw // short_side_multiple+1) * short_side_multiple
-            padding = (target_width - nw) // 2
-            pil_image = ImageOps.expand(pil_image, (padding, 0), fill='black')
-        else:
-            target_height = (nh // short_side_multiple+1) * short_side_multiple
-            padding = (target_height - nh) // 2
-            pil_image = ImageOps.expand(pil_image, (0, padding), fill='black')
 
-    print('Input image size:', pil_image.size)
+        pil_image = pil_image.resize((nw, nh), Image.ANTIALIAS)
+        w, h = pil_image.size  # Update size after resizing
+    
+    # Calculate target dimensions ensuring they are multiples of side_multiple
+    target_width = math.ceil(w / side_multiple) * side_multiple
+    target_height = math.ceil(h / side_multiple) * side_multiple
+
+    # Add padding if necessary to meet the multiple constraint
+    if target_width != w or target_height != h:
+        print('[W] Adding padding to ensure both sides are multiples of 32 without altering aspect ratio.')
+
+    # Add horizontal padding
+    if target_width != w:
+        x_padding = target_width - w
+        pil_image = ImageOps.expand(pil_image, (x_padding // 2, 0, x_padding - x_padding // 2, 0), fill='black')
+
+    # Add vertical padding
+    if target_height != h:
+        y_padding = target_height - h
+        pil_image = ImageOps.expand(pil_image, (0, y_padding // 2, 0, y_padding - y_padding // 2), fill='black')
+
+    print('Adjusted image size:', pil_image.size)
     return pil_image
 
 
